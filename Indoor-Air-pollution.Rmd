@@ -1,0 +1,67 @@
+---
+title: "Indoor Air Pollution"
+author: "David Jackson"
+date: '2022-04-20'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(dlookr)
+  
+```
+
+## Indoor Air Polution
+#### Data Source: http://ourworldindata.org
+
+Indoor air pollution is caused by burning solid fuel sources – such as firewood, crop waste, and dung – for cooking and heating.
+
+The burning of such fuels, particularly in poor households, results in air pollution that leads to respiratory diseases which can result in premature death. The WHO calls indoor air pollution “the world’s largest single environmental health risk.”
+
+#### Data Wrangling
+
+```{r cars}
+tuesdata <- tidytuesdayR::tt_load('2022-04-12')
+```
+```{r}
+indoor_pollution <- tuesdata$indoor_pollution %>%
+  janitor::clean_names() %>% rename(cause_of_death = deaths_cause_all_causes_risk_household_air_pollution_from_solid_fuels_sex_both_age_age_standardized_percent)
+```
+
+### Analysis of Indoor Polution Worldwide
+Deaths cause all causes risk household air pollution from solid fuels  
+
+```{r}
+indoor_pollution %>% filter(entity =="World") %>%
+  ggplot(aes(x=year,y=cause_of_death)) + geom_area()
+  
+```
+```{r}
+fuel_gdp <- tuesdata$fuel_gdp %>% janitor::clean_names()
+```
+
+access_to_clean_fuels_and_technologies_for_cooking_percent_of_population
+
+```{r}
+fuel_access <- tuesdata$fuel_access %>% janitor::clean_names() %>%
+  rename(clean_fuel_percent_population = access_to_clean_fuels_and_technologies_for_cooking_percent_of_population) 
+
+fuel_access %>% filter(entity =="World") %>%
+  ggplot(aes(x=year,y=clean_fuel_percent_population)) + geom_line() +
+  labs(title ="Percent of World Populaton with Access to Clean Fuel",
+       y="Percent of Population") 
+```
+```{r}
+death_ts <- tuesdata$death_timeseries %>% janitor::clean_names()
+```
+```{r}
+death_source <- tuesdata$death_source %>% janitor::clean_names()
+```
+```{r}
+death_fuel <- tuesdata$death_fuel %>% janitor::clean_names()
+```
+
+
